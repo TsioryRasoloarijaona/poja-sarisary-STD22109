@@ -1,4 +1,4 @@
-package hei.school.sarisary.endpoint.rest.controller;
+package hei.school.sarisary.endpoint.rest.controller.health;
 
 import hei.school.sarisary.file.BucketComponent;
 import lombok.AllArgsConstructor;
