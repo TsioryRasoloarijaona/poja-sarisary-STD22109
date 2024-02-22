@@ -42,7 +42,7 @@ public class PingController {
         try {
           File file = File.createTempFile("temp", null);
           img.transferTo(file);
-          bucketComponent.upload(file, id+".png");
+          bucketComponent.upload(file, id+"original.png");
         } catch (IOException e) {
           throw new RuntimeException(e);
         }
