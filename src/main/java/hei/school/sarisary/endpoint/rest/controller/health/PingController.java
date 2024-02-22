@@ -33,7 +33,7 @@ public class PingController {
     return "pong";
   }
 
-  @PostMapping(value = "/black/{id}",
+  @PutMapping(value = "/black/{id}",
           consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.IMAGE_JPEG_VALUE)
   public ResponseEntity<byte[]> toBlackAndWhite(@RequestBody MultipartFile img, @PathVariable String id) {
     try {
