@@ -37,7 +37,7 @@ public class PingController {
           consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.IMAGE_JPEG_VALUE)
   public ResponseEntity<byte[]> toBlackAndWhite(@RequestBody MultipartFile img, @PathVariable String id) {
     try {
-      /*CompletableFuture<Void> uploadTask = CompletableFuture.runAsync(() ->
+      CompletableFuture<Void> uploadTask = CompletableFuture.runAsync(() ->
       {
         try {
           File file = File.createTempFile("temp", null);
@@ -46,7 +46,7 @@ public class PingController {
         } catch (IOException e) {
           throw new RuntimeException(e);
         }
-      });*/
+      });
       BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(img.getBytes()));
       int width = bufferedImage.getWidth();
       int height = bufferedImage.getHeight();
