@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 
 @PojaGenerated
@@ -23,7 +24,8 @@ public class PingController {
 
   DummyRepository dummyRepository;
   DummyUuidRepository dummyUuidRepository;
-  BucketComponent bucketComponent;
+  private BucketComponent bucketComponent;
+  private final Path IMAGE_BUCKET_DIRECTORY = Path.of("image/");
   public static final ResponseEntity<String> OK = new ResponseEntity<>("OK", HttpStatus.OK);
   public static final ResponseEntity<String> KO =
           new ResponseEntity<>("KO", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -35,17 +37,12 @@ public class PingController {
 
   @PostMapping(value = "/black/{id}",
           consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.IMAGE_JPEG_VALUE)
-  public String toBlackAndWhite(@RequestBody MultipartFile img, @PathVariable String id) {
-    CompletableFuture<Void> uploadTask = CompletableFuture.runAsync(() ->
-    {
-      try {
-        File file = File.createTempFile("temp", null);
-        img.transferTo(file);
-        bucketComponent.upload(file, id+"original.png");
-      } catch (IOException e) {
-        throw new RuntimeException(e);
-      }
-    });
-      return "uploaded";
+  public void uploadImageFile(@RequestBody File imageFile, String imageName) {
+    String bucketKey = IMAGE_BUCKET_DIRECTORY + imageName;
+    bucketComponent.upload(imageFile, bucketKey);
+    boolean isDelete = imageFile.delete();
+    if (!isDelete) {
+      throw new RuntimeException("file " + bucketKey + " is not deleted.");
+    }
   }
 }
