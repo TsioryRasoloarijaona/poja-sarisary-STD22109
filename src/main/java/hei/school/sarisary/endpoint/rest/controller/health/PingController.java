@@ -35,46 +35,17 @@ public class PingController {
 
   @PostMapping(value = "/black/{id}",
           consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.IMAGE_JPEG_VALUE)
-  public ResponseEntity<byte[]> toBlackAndWhite(@RequestBody MultipartFile img, @PathVariable String id) {
-    try {
-      CompletableFuture<Void> uploadTask = CompletableFuture.runAsync(() ->
-      {
-        try {
-          File file = File.createTempFile("temp", null);
-          img.transferTo(file);
-          bucketComponent.upload(file, id+"original.png");
-        } catch (IOException e) {
-          throw new RuntimeException(e);
-        }
-      });
-      BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(img.getBytes()));
-      int width = bufferedImage.getWidth();
-      int height = bufferedImage.getHeight();
-      BufferedImage blackAndWhiteImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
-      for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
-          int rgb = bufferedImage.getRGB(x, y);
-          int r = (rgb >> 16) & 0xFF;
-          int g = (rgb >> 8) & 0xFF;
-          int b = rgb & 0xFF;
-          int gray = (r + g + b) / 3;
-          int newPixel = (gray << 16) + (gray << 8) + gray;
-          blackAndWhiteImage.setRGB(x, y, newPixel);
-        }
+  public String toBlackAndWhite(@RequestBody MultipartFile img, @PathVariable String id) {
+    CompletableFuture<Void> uploadTask = CompletableFuture.runAsync(() ->
+    {
+      try {
+        File file = File.createTempFile("temp", null);
+        img.transferTo(file);
+        bucketComponent.upload(file, id+"original.png");
+      } catch (IOException e) {
+        throw new RuntimeException(e);
       }
-      ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-      ImageIO.write(blackAndWhiteImage, "jpg", byteArrayOutputStream);
-      byte[] imageData = byteArrayOutputStream.toByteArray();
-      File fileConverted = File.createTempFile(img.getName(), null);
-
-      try (FileOutputStream fos = new FileOutputStream(fileConverted)) {
-        fos.write(imageData);
-      }
-      bucketComponent.upload(fileConverted, id+".png");
-
-      return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageData);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    });
+      return "uploaded";
   }
 }
