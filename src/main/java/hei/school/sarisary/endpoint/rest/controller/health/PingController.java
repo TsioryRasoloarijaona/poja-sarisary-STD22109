@@ -37,8 +37,8 @@ public class PingController {
 
   @PostMapping(value = "/black/{id}",
           consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.IMAGE_JPEG_VALUE)
-  public void uploadImageFile(@RequestBody File imageFile,@PathVariable String id) {
+  public String uploadImageFile(@RequestBody File imageFile,@PathVariable String id) {
     bucketComponent.upload(imageFile, id+".png");
-
+    return id+".png";
   }
 }
